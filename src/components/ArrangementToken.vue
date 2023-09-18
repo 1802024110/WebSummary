@@ -11,7 +11,7 @@ GM_registerMenuCommand('配置token', () => {
 })
 
 // 是否显示设置
-const show = ref(true)
+const show = ref(false)
 // 是否在测试中
 const testShow = ref(false)
 
@@ -54,7 +54,10 @@ async function getModelList() {
     res["data"].map((item:any)=>{
       // 如果原列表不存在,则添加
       if( formData.modelList.includes(item.id) === false){
-        formData.modelList.push(item.id)
+        // 只添加id为gpt-3.5-turbo-0613和gpt-4-0613的
+        if(item.id.includes('gpt-3.5-turbo-0613') || item.id.includes('gpt-4-0613')){
+          formData.modelList.push(item.id)
+        }
       }
     })
 
@@ -136,9 +139,11 @@ onMounted(() => {
                   </var-tooltip>
                 </var-col>
                 <var-col :span="4" justify="flex-end">
-                  <var-button type="primary" @click="getModelList" :loading="testShow" loading-type="cube">
-                    获取模型列表
-                  </var-button>
+                  <var-tooltip content="由于使用了较新的api，只支持gpt-3.5-turbo-0613和gpt-4-0613">
+                    <var-button type="primary" @click="getModelList" :loading="testShow" loading-type="cube">
+                      获取模型列表
+                    </var-button>
+                  </var-tooltip>
                 </var-col>
               </var-row>
               <!--            每秒最大请求次数-->

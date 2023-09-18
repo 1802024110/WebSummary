@@ -3,6 +3,8 @@ import {getHtmlSource} from "@/api/web";
 import { Snackbar } from '@varlet/ui'
 import MessageBox from "@/components/MessageBox.vue";
 import {ref} from "vue";
+import {ChatGpt} from "@/api/chatgpt";
+import {GM_getValue} from 'vite-plugin-monkey/dist/client';
 
 // 对话框标题
 const title = "总结";
@@ -33,13 +35,31 @@ for (let i = 0; i < issuesDivs.length; i++) {
 
   // 获得issuesDiv里面的a标签的href
   const issuesHref = issuesDiv.getElementsByTagName('a')[0].href;
+  
+  const config = GM_getValue('config') as Record<string, any>;
+  const chatGpt = new ChatGpt({
+  baseUrl: config.serviceHost,
+  token: config.apiKey,
+  model: config.model
+  });
 
   button.onclick = () => {
+    button.innerText = '加载中...';
     getHtmlSource(issuesHref).then( (res:string) => {
-
-        console.log(res)
+        chatGpt.sendChat(
+          res
+        ).then((res:any) => {
+          console.log(res);
+          button.innerText = '完成';
+          // 三秒后关恢复文本
+          setTimeout(() => {
+            button.innerText = '总结';
+          }, 3000);
+        })
       }
     ).catch((err:string) => {
+      button.innerText = '失败';
+      button.style.backgroundColor = 'red';
       Snackbar.error("请求失败");
     })
   };
