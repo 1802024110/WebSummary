@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {getHtmlSource} from "@/api/web";
+import {getGithubIssuesContent, getHtmlSource} from "@/api/web";
 import { Snackbar } from '@varlet/ui'
 import MessageBox from "@/components/MessageBox.vue";
 import {ref} from "vue";
@@ -45,23 +45,19 @@ for (let i = 0; i < issuesDivs.length; i++) {
 
   button.onclick = () => {
     button.innerText = '加载中...';
-    getHtmlSource(issuesHref).then( (res:string) => {
-        chatGpt.sendChat(
-          res
-        ).then((res:any) => {
-          console.log(res);
-          button.innerText = '完成';
-          // 三秒后关恢复文本
-          setTimeout(() => {
-            button.innerText = '总结';
-          }, 3000);
-        })
-      }
-    ).catch((err:string) => {
-      button.innerText = '失败';
-      button.style.backgroundColor = 'red';
-      Snackbar.error("请求失败");
+    getGithubIssuesContent(issuesHref).then((res:string) => {
+      console.log(res);
     })
+    // getHtmlSource(issuesHref).then( (res:string) => {
+    //     chatGpt.sendChat(
+    //       res
+    //     )
+    //   }
+    // ).catch((err:string) => {
+    //   button.innerText = '失败';
+    //   button.style.backgroundColor = 'red';
+    //   Snackbar.error("请求失败");
+    // })
   };
 
   issuesDiv.insertBefore(button, firstChild);
