@@ -11,14 +11,15 @@
   "dependencies": {
     "@varlet/touch-emulator": "latest",
     "@varlet/ui": "^2.16.2",
+    "gpt-tokenizer": "^2.1.1",
     "highlight.js": "^11.8.0",
     "marked": "^9.0.0",
     "marked-highlight": "^2.0.6",
     "vue": "^3.3.4"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.2.3",
     "@types/node": "^18.17.5",
+    "@vitejs/plugin-vue": "^4.2.3",
     "typescript": "^5.1.6",
     "vite": "^4.4.8",
     "vite-plugin-monkey": "^3.4.0",

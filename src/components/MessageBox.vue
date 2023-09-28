@@ -9,7 +9,6 @@ import { Snackbar } from '@varlet/ui'
 
 const drag = ref(null)
 
-const show = ref(true);
 // 卡片全屏
 const fullscreen = ref(false);
 const cardProps = defineProps({
@@ -22,10 +21,6 @@ const cardProps = defineProps({
     type: String,
     default:'',
     required: true,
-  },
-  show: {
-    type: Boolean,
-    default: true,
   }
 });
 // 创建一个script标签
@@ -62,14 +57,14 @@ const msg = computed(  () => {
 </script>
 
 <template>
-  <div  v-if="show">
+  <div >
     <var-drag  style="top: 0; left: 0"  ref="drag">
       <var-card style="width: 50vw;overflow: hidden;" :floating="fullscreen" :description="cardProps.msg" >
         <template #title>
           <var-row justify="space-between" align="end" style="margin-bottom: 8px">
             <div class="var-card__title">{{ cardProps.title }}</div>
             <var-space>
-              <var-button type="danger" round @click="show = false">
+              <var-button type="danger" round v-on:click="$emit('close', $event)">
                 <var-icon name="window-close" />
               </var-button>
               <var-button type="primary" round @click="fullscreen=!fullscreen">

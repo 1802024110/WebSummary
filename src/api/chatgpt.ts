@@ -1,18 +1,19 @@
-import { GM_xmlhttpRequest} from 'vite-plugin-monkey/dist/client';
+import {GM_xmlhttpRequest} from 'vite-plugin-monkey/dist/client';
+import {encode} from "gpt-tokenizer";
 
-export class ChatGpt{
-    baseUrl:string;
+export class ChatGpt {
+    baseUrl: string;
     token: string;
     prompt: string;
-    model:string;
+    model: string;
     headers: Record<string, string>;
 
     constructor({
                     baseUrl = "https://api.openai.com",
                     token = '',
-                    prompt= '',
+                    prompt = '',
                     model = '',
-                } : {
+                }: {
         baseUrl?: string;
         token?: string;
         prompt?: string;
@@ -21,26 +22,27 @@ export class ChatGpt{
         this.baseUrl = baseUrl;
         this.token = token;
         this.prompt = prompt;
-        this.model =  model;
+        this.model = model;
         this.headers = {
-                    Accept: "application/json",
-                    Authorization: `Bearer ${this.token}`,
-                    "Content-Type": "application/json",
-                }
+            Accept: "application/json",
+            Authorization: `Bearer ${this.token}`,
+            "Content-Type": "application/json",
+        }
     }
 
-    sendChat(msg:string){
+    sendChat(msg: string) {
+        const tokens = encode(msg);
+        // 如果超过4096个token
+        if (tokens.length > 4096) {
+            return Promise.reject("超过4096个token");
+        }
+
         const msgList = [
-            {"role": "system", "content": "这是GitHub issues页面，帮我用中文给我解释，如果有代码最好带上代码"},
+            {"role": "system", "content": "帮我在github issues中分析出问题的答案，不需要问题详情，直接返回给我中文答案，如果有代码同样加上中文注释返回给我"},
+            {"role": "user", "content": msg},
         ]
 
-        if(msg.length>=4096){
-            // 先添加第一行
-            // 以4096个字符为一行
-            for (let i = 0; i < msg.length; i += 4096) {
-                msgList.push({"role": "user", "content": msg.slice(i, i + 4096)})
-            }
-
+        return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
                 url: this.baseUrl + '/v1/chat/completions',
                 method: "POST",
@@ -48,31 +50,52 @@ export class ChatGpt{
                 data: JSON.stringify({
                     "model": this.model,
                     "messages": msgList,
-                    "stream": false
+                    "stream": false,
+                    "functions": [
+                        {
+                            "name": "msgCard",
+                            "description": "这个函数用于渲染对话，解释两个参数，分别是对话内容总结标题和你帮我总结后的内容",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "description": "本次会话内容总结的标题"
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "description": "本次会话内容"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "function_call": {"name": "msgCard"}
                 }),
                 onload: (response) => {
                     if (response.status === 200) {
-                        const data = JSON.parse(response.responseText);
-                        const role = data.choices[0].message['role'];
-                        const content = data.choices[0].message['content']
-                        msgList.push({"role": role, "content": content})
+                        const responseJson = JSON.parse(response.responseText);
+                        // if(responseJson.status!=200){
+                        //     resolve(responseJson.statusText);
+                        // }
+                        const msgJson = JSON.parse(responseJson.choices[0].message.function_call.arguments);
+                        // 当前总共消耗token
+                        const totalTokens = responseJson.usage.total_tokens;
+                        msgList.push({"role": "assistant", "content": msgJson});
+                        resolve([msgList, totalTokens]);
                     }
-                    console.log(response)
-                    console.log(msgList);
                 },
                 onerror: (response) => {
 
                 },
             });
-        }
 
-        // console.log(msgList);
-
+        })
     }
 
     // 获得模型列表
-    getModelList() : Promise<any> {
-        return new Promise((resolve,reject)=>{
+    getModelList(): Promise<any> {
+        return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
                 url: this.baseUrl + '/v1/models',
                 method: "GET",
@@ -80,7 +103,7 @@ export class ChatGpt{
                 onload: (response) => {
                     if (response.status === 200) {
                         resolve(JSON.parse(response.responseText));
-                    }else {
+                    } else {
                         reject(response);
                     }
                 },

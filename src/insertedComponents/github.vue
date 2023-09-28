@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import {getGithubIssuesContent, getHtmlSource} from "@/api/web";
-import { Snackbar } from '@varlet/ui'
+import {
+  encode
+} from 'gpt-tokenizer'
 import MessageBox from "@/components/MessageBox.vue";
 import {ref} from "vue";
 import {ChatGpt} from "@/api/chatgpt";
 import {GM_getValue} from 'vite-plugin-monkey/dist/client';
 
 // 对话框标题
-const title = "总结";
+const title = ref();
 // 对话框内容
-const msg = "总结";
+const msg = ref();
 // 是否显示
 const show = ref(false);
 
@@ -44,9 +46,21 @@ for (let i = 0; i < issuesDivs.length; i++) {
   });
 
   button.onclick = () => {
+    // const text = 'Hello, world!zhe dsfdhcvuh@@@@@@$*HDFH!#@*DHD#&Y&@><CL:<EFE|'
+    // const tokens = encode(text)
+    // console.log(tokens)
+    // console.log(tokens.length)
+
     button.innerText = '加载中...';
     getGithubIssuesContent(issuesHref).then((res:string) => {
-      console.log(res);
+      chatGpt.sendChat(res).then((res) => {
+        title.value = res[0][2].content.title
+        msg.value = res[0][2].content.content
+        show.value = true
+        button.innerText = '完成';
+      }).catch((err) => {
+        console.log(err);
+      })
     })
     // getHtmlSource(issuesHref).then( (res:string) => {
     //     chatGpt.sendChat(
@@ -67,7 +81,7 @@ for (let i = 0; i < issuesDivs.length; i++) {
 </script>
 
 <template>
-  <message-box :title="title" :msg="msg" v-if="show"/>
+  <message-box :title="title" :msg="msg" @close="show=false" v-if="show"/>
 </template>
 
 <style scoped>
