@@ -76,6 +76,9 @@ function handleSubmit(valid:boolean) {
   GM_setValue('config', formData)
 
   show.value = false
+
+  // 刷新网页
+  window.location.reload()
 }
 
 onMounted(() => {

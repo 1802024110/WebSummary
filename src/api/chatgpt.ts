@@ -1,5 +1,4 @@
 import {GM_xmlhttpRequest} from 'vite-plugin-monkey/dist/client';
-import {encode} from "gpt-tokenizer";
 
 export class ChatGpt {
     baseUrl: string;
@@ -31,11 +30,6 @@ export class ChatGpt {
     }
 
     sendChat(question: string) {
-        const tokens = encode(question);
-        // 如果超过4096个token
-        if (tokens.length > 4096) {
-            return Promise.reject("超过4096个token");
-        }
 
         const msgList = [
             {
@@ -96,12 +90,6 @@ export class ChatGpt {
     }
 
     sendChatWithSteam(question:string,callback: (responseJson: Record<string, any>) => void) {
-        // const tokens = encode(msg);
-        // // 如果超过4096个token
-        // if (tokens.length > 4096) {
-        //     return Promise.reject("超过4096个token");
-        // }
-
         const msgList = [
             {
                 "role": "system",

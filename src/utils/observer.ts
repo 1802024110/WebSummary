@@ -7,9 +7,7 @@
 export function watchLocationHref(callback:(previous: string, current: string) => void):void {
     // 检测浏览器是否支持 MutationObserver
     const MutationObserver =
-        window.MutationObserver ||
-        window.WebKitMutationObserver ||
-        window.MozMutationObserver;
+        window.MutationObserver;
 
     // 获取当前页面的 URL
     const getCurrentURL = () => location.href;

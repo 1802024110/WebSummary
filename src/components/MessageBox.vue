@@ -9,6 +9,8 @@ import { Snackbar } from '@varlet/ui'
 
 const drag = ref(null)
 
+const pin = ref(true)
+
 // 卡片全屏
 const fullscreen = ref(false);
 const cardProps = defineProps({
@@ -58,12 +60,22 @@ const msg = computed(  () => {
 
 <template>
   <div >
-    <var-drag  style="top: 0; left: 0"  ref="drag">
+    <var-drag  style="top: 0; left: 0"  ref="drag" :disabled="pin">
       <var-card style="width: 50vw;overflow: hidden;" :floating="fullscreen" :description="cardProps.msg" >
         <template #title>
           <var-row justify="space-between" align="end" style="margin-bottom: 8px">
             <div class="var-card__title">{{ cardProps.title }}</div>
             <var-space>
+              <var-radio
+                  v-model="pin"
+              >
+                <template #unchecked-icon>
+                  <var-icon name="pin-off" size="24px"/>
+                </template>
+                <template #checked-icon>
+                  <var-icon name="pin" size="24px"/>
+                </template>
+              </var-radio>
               <var-button type="danger" round v-on:click="$emit('close', $event)">
                 <var-icon name="window-close" />
               </var-button>

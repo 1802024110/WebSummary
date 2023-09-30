@@ -7,6 +7,7 @@ import MessageBox from "@/components/MessageBox.vue";
 import {ref} from "vue";
 import {ChatGpt} from "@/api/chatgpt";
 import {GM_getValue} from 'vite-plugin-monkey/dist/client';
+import {Snackbar} from "@varlet/ui";
 
 // 对话框标题
 const title = ref();
@@ -37,13 +38,15 @@ for (let i = 0; i < issuesDivs.length; i++) {
 
   // 获得issuesDiv里面的a标签的href
   const issuesHref = issuesDiv.getElementsByTagName('a')[0].href;
-  
-  const config = GM_getValue('config') as Record<string, any>;
-  const chatGpt = new ChatGpt({
-  baseUrl: config.serviceHost,
-  token: config.apiKey,
-  model: config.model
-  });
+  try {
+    const config = GM_getValue('config') as Record<string, any>;
+    const chatGpt = new ChatGpt({
+      baseUrl: config.serviceHost ,
+      token: config.apiKey,
+      model: config.model
+    });
+
+
 
   button.onclick = () => {
     button.innerText = '加载中...';
@@ -54,29 +57,36 @@ for (let i = 0; i < issuesDivs.length; i++) {
         let contentState = 0
         let msg = ' ';
         responseJson.forEach((item:Record<string, any>)=>{
-          if (item.choices[0].delta.function_call.arguments){
-            msg += item.choices[0].delta.function_call.arguments
+          try {
+            if (item.choices[0].delta.function_call.arguments){
+              msg += item.choices[0].delta.function_call.arguments
 
-            if (titleState === 0) {
-              // console.log(msg)
-              title.value = msg.match(/"title": "(.*)/g)?.[0].replace(/"title": "/g, '').replace(/",/g, '')
-            }else if(msg.match(/",/g)){
-              titleState = 1
+              if (titleState === 0) {
+                title.value = msg.match(/"title": "(.*)/g)?.[0].replace(/"title": "/g, '').replace(/",/g, '')
+              }else if(msg.match(/",/g)){
+                titleState = 1
+              }
+
+              if (contentState === 0) {
+                content.value = msg.match(/"content": "(.*)/g)?.[0].replace(/"content": "/g, '').replace(/",/g, '').slice(0,-1)
+              }else if(msg.match(/}"/g)){
+                contentState = 1
+              }
             }
 
-            if (contentState === 0) {
-              content.value = msg.match(/"content": "(.*)/g)?.[0].replace(/"content": "/g, '').replace(/",/g, '').slice(0,-1)
-            }else if(msg.match(/}"/g)){
-              contentState = 1
-            }
+          } catch (error) {
           }
         })
         button.innerText = '再次总结';
       })
+    }).catch((err)=>{
+      Snackbar.error(err)
     })
   };
-
   issuesDiv.insertBefore(button, firstChild);
+  } catch (error) {
+    Snackbar.error("未能获取到配置信息,请在油猴插件列表打开脚本设置后刷新页面");
+  }
 }
 
 
