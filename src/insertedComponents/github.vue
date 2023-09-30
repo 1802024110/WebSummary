@@ -11,7 +11,7 @@ import {GM_getValue} from 'vite-plugin-monkey/dist/client';
 // 对话框标题
 const title = ref();
 // 对话框内容
-const msg = ref();
+const content = ref();
 // 是否显示
 const show = ref(false);
 
@@ -46,32 +46,34 @@ for (let i = 0; i < issuesDivs.length; i++) {
   });
 
   button.onclick = () => {
-    // const text = 'Hello, world!zhe dsfdhcvuh@@@@@@$*HDFH!#@*DHD#&Y&@><CL:<EFE|'
-    // const tokens = encode(text)
-    // console.log(tokens)
-    // console.log(tokens.length)
-
     button.innerText = '加载中...';
     getGithubIssuesContent(issuesHref).then((res:string) => {
-      chatGpt.sendChat(res).then((res) => {
-        title.value = res[0][2].content.title
-        msg.value = res[0][2].content.content
+      chatGpt.sendChatWithSteam(res,(responseJson)=>{
         show.value = true
-        button.innerText = '完成';
-      }).catch((err) => {
-        console.log(err);
+        let titleState = 0;
+        let contentState = 0
+        let msg = ' ';
+        responseJson.forEach((item:Record<string, any>)=>{
+          if (item.choices[0].delta.function_call.arguments){
+            msg += item.choices[0].delta.function_call.arguments
+
+            if (titleState === 0) {
+              // console.log(msg)
+              title.value = msg.match(/"title": "(.*)/g)?.[0].replace(/"title": "/g, '').replace(/",/g, '')
+            }else if(msg.match(/",/g)){
+              titleState = 1
+            }
+
+            if (contentState === 0) {
+              content.value = msg.match(/"content": "(.*)/g)?.[0].replace(/"content": "/g, '').replace(/",/g, '').slice(0,-1)
+            }else if(msg.match(/}"/g)){
+              contentState = 1
+            }
+          }
+        })
+        button.innerText = '再次总结';
       })
     })
-    // getHtmlSource(issuesHref).then( (res:string) => {
-    //     chatGpt.sendChat(
-    //       res
-    //     )
-    //   }
-    // ).catch((err:string) => {
-    //   button.innerText = '失败';
-    //   button.style.backgroundColor = 'red';
-    //   Snackbar.error("请求失败");
-    // })
   };
 
   issuesDiv.insertBefore(button, firstChild);
@@ -81,7 +83,7 @@ for (let i = 0; i < issuesDivs.length; i++) {
 </script>
 
 <template>
-  <message-box :title="title" :msg="msg" @close="show=false" v-if="show"/>
+  <message-box :title="title" :msg="content" @close="show=false" v-if="show"/>
 </template>
 
 <style scoped>
