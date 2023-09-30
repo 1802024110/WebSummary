@@ -4,6 +4,7 @@
 // @version      1.0.0
 // @author       monkey
 // @description  Github Issue 总结
+// @license      Apache License 2.0
 // @icon         https://jsdelivr.nodream.cf/gh/1802024110/GitHub_Oss@main/img/博客插件github_issue总结.png
 // @match        *://github.com/*/*/issues
 // @require      https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.global.prod.js
