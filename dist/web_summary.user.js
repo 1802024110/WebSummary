@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         web_summary_hub
+// @name         web_summary
 // @namespace    007666.xyz
 // @version      1.0.1
 // @author       monkey
