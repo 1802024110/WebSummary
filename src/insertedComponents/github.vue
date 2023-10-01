@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import {getGithubIssuesContent, getHtmlSource} from "@/api/web";
-import {
-  encode
-} from 'gpt-tokenizer'
 import MessageBox from "@/components/MessageBox.vue";
 import {ref} from "vue";
 import {ChatGpt} from "@/api/chatgpt";
