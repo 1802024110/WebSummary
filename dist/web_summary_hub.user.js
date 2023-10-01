@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         web_summary_hub
 // @namespace    007666.xyz
-// @version      1.0.0
+// @version      1.0.1
 // @author       monkey
 // @description  Github Issue 总结
 // @license      Apache License 2.0
