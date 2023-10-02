@@ -2,7 +2,7 @@
   "name": "web_summary",
   "description": "Github Issue 总结",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
