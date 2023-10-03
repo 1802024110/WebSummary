@@ -3,7 +3,8 @@ import {computed, ref} from 'vue';
 import 'highlight.js/styles/github-dark.css'
 import {Marked} from "marked";
 import {markedHighlight} from "marked-highlight";
-import hljs from 'highlight.js';
+// import hljs from 'highlight.js';
+import hljs from 'highlight.js/lib/core';
 import { Snackbar } from '@varlet/ui'
 
 
