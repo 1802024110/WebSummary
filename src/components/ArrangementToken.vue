@@ -110,6 +110,13 @@ onMounted(() => {
               >
                 <var-radio :checked-value="1">使用OpenAI官方服务</var-radio>
                 <var-radio :checked-value="2">使用第三方服务</var-radio>
+                <var-tooltip
+                    content="让我们感谢好心人!"
+                    placement="top"
+                >
+                  <a target="_blank" v-show="formData.service === 2" href="https://github.com/chatanywhere/GPT_API_free">推荐免费api</a>
+                </var-tooltip>
+
               </var-radio-group>
 
               <!--            设置api地址-->

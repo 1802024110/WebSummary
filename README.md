@@ -1,4 +1,6 @@
 # webSummary
+## 请我吃包辣条
+![我的扫码领红包](https://jsdelivr.nodream.cf/gh/1802024110/GitHub_Oss@main/img/我的支付宝扫码领红包二维码.png)
 ## 前言
 webSummary是用于总结各大网页(github issues)的网页插件。目以组件化的方式设计以便更好的添加新的网页支持，但个人精力有限，希望能够帮助大家。
 ## 安装方法
@@ -20,3 +22,4 @@ webSummary是用于总结各大网页(github issues)的网页插件。目以组�
 图片
 
 ## 拓展网站
+待续

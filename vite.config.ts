@@ -18,7 +18,7 @@ export default defineConfig({
       userscript: {
         icon: 'https://jsdelivr.nodream.cf/gh/1802024110/GitHub_Oss@main/img/博客插件github_issue总结.png',
         namespace: '007666.xyz',
-        match: ['*://github.com/*/*/issues']
+        match: ['*://github.com/*']
       },
       build: {
         externalGlobals: {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {getGithubIssuesContent, getHtmlSource} from "@/api/web";
+import {getGithubIssuesContent} from "@/api/web";
 import MessageBox from "@/components/MessageBox.vue";
 import {ref} from "vue";
 import {ChatGpt} from "@/api/chatgpt";

@@ -9332,21 +9332,21 @@ ${content}</tr>
         }
         switch (token.type) {
           case "space": {
-            continue;
+
           }
           case "hr": {
             out += this.renderer.hr();
-            continue;
+
           }
           case "heading": {
             const headingToken = token;
             out += this.renderer.heading(this.parseInline(headingToken.tokens), headingToken.depth, unescape(this.parseInline(headingToken.tokens, this.textRenderer)));
-            continue;
+
           }
           case "code": {
             const codeToken = token;
             out += this.renderer.code(codeToken.text, codeToken.lang, !!codeToken.escaped);
-            continue;
+
           }
           case "table": {
             const tableToken = token;
@@ -9366,13 +9366,13 @@ ${content}</tr>
               body += this.renderer.tablerow(cell2);
             }
             out += this.renderer.table(header, body);
-            continue;
+
           }
           case "blockquote": {
             const blockquoteToken = token;
             const body = this.parse(blockquoteToken.tokens);
             out += this.renderer.blockquote(body);
-            continue;
+
           }
           case "list": {
             const listToken = token;
@@ -9407,17 +9407,17 @@ ${content}</tr>
               body += this.renderer.listitem(itemBody, task, !!checked);
             }
             out += this.renderer.list(body, ordered, start2);
-            continue;
+
           }
           case "html": {
             const htmlToken = token;
             out += this.renderer.html(htmlToken.text, htmlToken.block);
-            continue;
+
           }
           case "paragraph": {
             const paragraphToken = token;
             out += this.renderer.paragraph(this.parseInline(paragraphToken.tokens));
-            continue;
+
           }
           case "text": {
             let textToken = token;
@@ -9427,7 +9427,7 @@ ${content}</tr>
               body += "\n" + (textToken.tokens ? this.parseInline(textToken.tokens) : textToken.text);
             }
             out += top2 ? this.renderer.paragraph(body) : body;
-            continue;
+
           }
           default: {
             const errMsg = 'Token with "' + token.type + '" type was not found.';
